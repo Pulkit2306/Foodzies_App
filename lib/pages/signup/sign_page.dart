@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:food_demo_app/pages/login/login_page.dart';
 import 'package:food_demo_app/pages/signup/components/signup_auth_provider.dart';
+import 'package:food_demo_app/route/routing_page.dart';
 import 'package:food_demo_app/widgets/my_button.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -130,10 +131,10 @@ class _SignUpPageState extends State<SignUpPage> {
                       Text("Already have an Account?\t\t\t\t"),
                       GestureDetector(
                         onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => LoginPage(),
-                              ),
-                            );
+                          RoutingPage.goTonext(
+                            context: context,
+                            navigateTo: LoginPage(),
+                          );
                         },
                         child: Text("LOG IN"),
                       ),

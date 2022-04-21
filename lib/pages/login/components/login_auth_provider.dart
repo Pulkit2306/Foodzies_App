@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:food_demo_app/pages/home/home_page.dart';
+import 'package:food_demo_app/route/routing_page.dart';
 
 class LoginAuthProvider with ChangeNotifier {
   static Pattern pattern =
@@ -53,11 +54,10 @@ class LoginAuthProvider with ChangeNotifier {
             .then((value) async {
               loading = false;
               notifyListeners();
-              await Navigator.of(context)
-                  .push(MaterialPageRoute(
-                    builder: (context) => HomePage(),
-                ),
-              );
+              await RoutingPage.goTonext(
+              context: context,
+              navigateTo: HomePage(),
+            );
           return null;
           }
         );

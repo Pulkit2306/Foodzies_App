@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:food_demo_app/pages/home/home_page.dart';
+import 'package:food_demo_app/route/routing_page.dart';
 
 class SignupAuthProvider with ChangeNotifier {
   static Pattern pattern =
@@ -90,12 +91,11 @@ class SignupAuthProvider with ChangeNotifier {
         ).then((value) {
           loading = false;
           notifyListeners();
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => HomePage(),
-            ),
-          );
-        }
+          RoutingPage.goTonext(
+              context: context,
+              navigateTo: HomePage(),
+            );
+          },
         );
       } on FirebaseAuthException catch(e){
         loading = false;
