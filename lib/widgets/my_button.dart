@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:food_demo_app/appColors/app_colors.dart';
 
 class MyButton extends StatefulWidget {
   final void Function()? onPressed;
@@ -27,8 +28,8 @@ class _MyButtonState extends State<MyButton> {
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              Color.fromARGB(255, 4, 38, 124),
-              Color.fromARGB(255, 5, 77, 245),
+                AppColors.KGradient1,
+                AppColors.KGradient2,
             ],
             begin: Alignment.centerLeft,
             end: Alignment.centerRight,
@@ -40,7 +41,9 @@ class _MyButtonState extends State<MyButton> {
           alignment: Alignment.center,
           child: Text(
             widget.text,
-            style: TextStyle(color: Colors.white),
+            style: TextStyle(
+              color: AppColors.KWhite,
+              ),
           ),
         ),
       ),

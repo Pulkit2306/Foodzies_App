@@ -27,6 +27,10 @@ class _SignUpPageState extends State<SignUpPage> {
         Provider.of<SignupAuthProvider>(context);
 
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
