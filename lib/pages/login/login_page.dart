@@ -48,9 +48,13 @@ class _LoginPageState extends State<LoginPage> {
               obscureText: visible,
             ),
             EndPart(
+              loading: loginAuthProvider.loading,
               onPressed: () {
                 loginAuthProvider.loginPageValidation(
-                    emailAddress: email, password: password, context: context);
+                    emailAddress: email, 
+                    password: password, 
+                    context: context,
+                );
               },
             ),
           ],
