@@ -38,16 +38,16 @@ class MyApp extends StatelessWidget {
             ),
           ),
         ),
-        //home: WelcomePage(),
-        home: StreamBuilder(
-            stream: FirebaseAuth.instance.authStateChanges(),
-            builder: (context, userSnapshot) {
-              if (userSnapshot.hasData) {
-                return HomePage();
-              }
-              return WelcomePage();
-            },
-            ),
+       home: WelcomePage(),
+        // home: StreamBuilder(
+        //     stream: FirebaseAuth.instance.authStateChanges(),
+        //     builder: (context, userSnapshot) {
+        //       if (userSnapshot.hasData) {
+        //         return HomePage();
+        //       }
+        //       return WelcomePage();
+        //     },
+        //     ),
       ),
     );
   }
