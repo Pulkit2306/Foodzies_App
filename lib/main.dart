@@ -1,10 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:food_demo_app/pages/login/components/login_auth_provider.dart';
 import 'package:food_demo_app/pages/signup/components/signup_auth_provider.dart';
 import 'package:food_demo_app/pages/welcome/welcome_page.dart';
-import 'package:food_demo_app/pages/home/home_page.dart';
 import 'package:provider/provider.dart';
 
 void main() async {

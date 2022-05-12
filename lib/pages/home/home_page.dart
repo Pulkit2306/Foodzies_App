@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:food_demo_app/appColors/app_colors.dart';
 import 'package:food_demo_app/models/user_model.dart';
 import 'package:food_demo_app/widgets/build_drawer.dart';
+import 'package:food_demo_app/widgets/grid_view_widget.dart';
+
+import '../../widgets/single_product.dart';
 
 late UserModel userModel;
 
@@ -71,22 +74,62 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
-          SingleChildScrollView(
-            physics: BouncingScrollPhysics(),
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                Categories(
-                  categoryName: "Category 1",
-                  image: "Assets/Images/starters.jpg",
-                ),
-                Categories(
-                  categoryName: "Catergory 2",
-                  image: "Assets/Images/soup.webp",
-                ),
-              ],
+
+          Container(
+            height: 125,
+            child: StreamBuilder(
+              stream: FirebaseFirestore.instance
+                  .collection("categories")
+                  .snapshots(),
+              builder: (context, AsyncSnapshot<QuerySnapshot> streamSnap) {
+                if (!streamSnap.hasData) {
+                  return Center(child: const CircularProgressIndicator());
+                }
+                // return Container(
+                //   color: Colors.red,
+                // );
+                return ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    physics: BouncingScrollPhysics(),
+                    itemCount: streamSnap.data!.docs.length,
+                    itemBuilder: (ctx, index) {
+                      return Categories(
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => GridViewWidget(
+                                collection: streamSnap.data!.docs[index]
+                            ["categoryName"],
+                                id: streamSnap.data!.docs[index].id,
+                              ),
+                              ),
+                            );
+                        },
+                        categoryName: streamSnap.data!.docs[index]
+                            ["categoryName"],
+                        image: streamSnap.data!.docs[index]["categoryImage"],
+                      );
+                    });
+              },
             ),
           ),
+
+          // SingleChildScrollView(
+          //   physics: BouncingScrollPhysics(),
+          //   scrollDirection: Axis.horizontal,
+          //   child: Row(
+          //     children: [
+          //       Categories(
+          //         categoryName: "Category 1",
+          //         image: "Assets/Images/starters.jpg",
+          //       ),
+          //       Categories(
+          //         categoryName: "Catergory 2",
+          //         image: "Assets/Images/soup.webp",
+          //       ),
+          //     ],
+          //   ),
+          // ),
+
           SizedBox(
             height: 30,
           ),
@@ -100,14 +143,39 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
-          SingleChildScrollView(
-            physics: BouncingScrollPhysics(),
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                SingleProduct(),
-                SingleProduct(),
-              ],
+          Container(
+            height: 300,
+            child: StreamBuilder(
+              stream: FirebaseFirestore.instance
+                  .collection("products")
+                  .snapshots(),
+              builder: (context, AsyncSnapshot<QuerySnapshot> streamSnap) {
+                if (!streamSnap.hasData) {
+                  return Center(child: const CircularProgressIndicator());
+                }
+                // return Container(
+                //   color: Colors.red,
+                // );
+                return ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    physics: BouncingScrollPhysics(),
+                    itemCount: streamSnap.data!.docs.length,
+                    itemBuilder: (ctx, index) {
+                      return SingleProduct(
+                        image: streamSnap.data!.docs[index]["productImage"], 
+                        name:  streamSnap.data!.docs[index]["productName"], 
+                        price: streamSnap.data!.docs[index]["productPrice"],
+                        );
+                      // return Categories(
+                      //   onTap: () {
+                          
+                      //   },
+                      //   categoryName: streamSnap.data!.docs[index]
+                      //       ["categoryName"],
+                      //   image: streamSnap.data!.docs[index]["categoryImage"],
+                      // );
+                    });
+              },
             ),
           ),
           SizedBox(
@@ -128,8 +196,16 @@ class _HomePageState extends State<HomePage> {
             scrollDirection: Axis.horizontal,
             child: Row(
               children: [
-                SingleProduct(),
-                SingleProduct(),
+                SingleProduct(
+                  image: "", 
+                  name: '', 
+                  price: 20,
+                ),
+                SingleProduct(
+                  image: "", 
+                  name: '', 
+                  price: 25,
+                ),
               ],
             ),
           ),
@@ -139,80 +215,58 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-class SingleProduct extends StatelessWidget {
-  const SingleProduct({Key? key}) : super(key: key);
 
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          margin: EdgeInsets.all(12),
-          height: 250,
-          width: 180,
-          decoration: BoxDecoration(
-            color: Colors.green,
-            borderRadius: BorderRadius.circular(20),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(
-            left: 23,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "\$30",
-                style: TextStyle(
-                  fontWeight: FontWeight.normal,
-                ),
-              ),
-              SizedBox(
-                height: 5,
-              ),
-              Text(
-                "Product Name",
-                style: TextStyle(
-                  fontWeight: FontWeight.normal,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
 
 class Categories extends StatelessWidget {
   final String image;
   final String categoryName;
+  final Function()? onTap;
+
   const Categories({
     Key? key,
     required this.image,
     required this.categoryName,
+    required this.onTap,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.all(12),
-      height: 100,
-      width: 185,
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          fit: BoxFit.cover,
-          image: AssetImage(
-            image,
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: EdgeInsets.all(12),
+        height: 100,
+        width: 185,
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            fit: BoxFit.cover,
+            image: NetworkImage(
+              image,
+            ),
           ),
+          borderRadius: BorderRadius.circular(10),
         ),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Center(
-        child: Text(
-          categoryName,
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+
+            gradient: LinearGradient(
+              begin: Alignment.center,
+              colors: [
+                Colors.black.withOpacity(0.55),
+                Colors.grey.withOpacity(0.7),
+              ],
+            ),
+          ),
+          child: Center(
+            child: Text(
+              categoryName,
+              style: TextStyle(
+                color: AppColors.KWhite,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
         ),
       ),
     );
