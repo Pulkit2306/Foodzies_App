@@ -4,43 +4,38 @@ class SingleProduct extends StatelessWidget {
   final String image;
   final double price;
   final String name;
+  final Function()? onTap;
 
-
-  const SingleProduct({
-
-    required this.image,
-    required this.price,
-    required this.name,
-    
-    
-    
-    
-    Key? key}) : super(key: key);
+  const SingleProduct(
+      {required this.image, 
+      required this.price, 
+      required this.name, 
+      required this.onTap,
+      
+      
+      Key? key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          margin: EdgeInsets.all(12),
-          height: 250,
-          width: 180,
-          decoration: BoxDecoration(
-            image: DecorationImage(
-              fit: BoxFit.cover,
-              image: NetworkImage(image),
+    return GestureDetector(
+      onTap: onTap,
+      child: Column(
+        children: [
+          Container(
+            margin: EdgeInsets.all(12),
+            height: 250,
+            width: 180,
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                fit: BoxFit.cover,
+                image: NetworkImage(image),
+              ),
+              borderRadius: BorderRadius.circular(20),
             ),
-            borderRadius: BorderRadius.circular(20),
           ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(
-            // left: 23,
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Text(
                 name,
@@ -49,7 +44,7 @@ class SingleProduct extends StatelessWidget {
                 ),
               ),
               SizedBox(
-                height: 5,
+                width: 50,
               ),
               Text(
                 "\$$price",
@@ -57,12 +52,10 @@ class SingleProduct extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              
-              
             ],
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

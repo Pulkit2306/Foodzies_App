@@ -64,7 +64,8 @@ class GridViewWidget extends StatelessWidget {
                   return SingleProduct(
                     image: data["productImage"],
                     name: data["productName"],
-                    price: data["productPrice"],
+                    price: data["productPrice"], 
+                    onTap: () {  },
                   );
                 },
               ),

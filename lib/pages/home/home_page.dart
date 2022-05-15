@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:food_demo_app/appColors/app_colors.dart';
 import 'package:food_demo_app/models/user_model.dart';
+import 'package:food_demo_app/pages/Details/details_page.dart';
+import 'package:food_demo_app/route/routing_page.dart';
 import 'package:food_demo_app/widgets/build_drawer.dart';
 import 'package:food_demo_app/widgets/grid_view_widget.dart';
 
@@ -95,14 +97,15 @@ class _HomePageState extends State<HomePage> {
                     itemBuilder: (ctx, index) {
                       return Categories(
                         onTap: () {
-                          Navigator.of(context).push(MaterialPageRoute(
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
                               builder: (context) => GridViewWidget(
                                 collection: streamSnap.data!.docs[index]
-                            ["categoryName"],
+                                    ["categoryName"],
                                 id: streamSnap.data!.docs[index].id,
                               ),
-                              ),
-                            );
+                            ),
+                          );
                         },
                         categoryName: streamSnap.data!.docs[index]
                             ["categoryName"],
@@ -146,9 +149,8 @@ class _HomePageState extends State<HomePage> {
           Container(
             height: 300,
             child: StreamBuilder(
-              stream: FirebaseFirestore.instance
-                  .collection("products")
-                  .snapshots(),
+              stream:
+                  FirebaseFirestore.instance.collection("products").snapshots(),
               builder: (context, AsyncSnapshot<QuerySnapshot> streamSnap) {
                 if (!streamSnap.hasData) {
                   return Center(child: const CircularProgressIndicator());
@@ -162,13 +164,19 @@ class _HomePageState extends State<HomePage> {
                     itemCount: streamSnap.data!.docs.length,
                     itemBuilder: (ctx, index) {
                       return SingleProduct(
-                        image: streamSnap.data!.docs[index]["productImage"], 
-                        name:  streamSnap.data!.docs[index]["productName"], 
+                        image: streamSnap.data!.docs[index]["productImage"],
+                        name: streamSnap.data!.docs[index]["productName"],
                         price: streamSnap.data!.docs[index]["productPrice"],
-                        );
+                        onTap: () {
+                          RoutingPage.goTonext(
+                              context: context, 
+                              navigateTo: DetailsPage(),
+                              );
+                        },
+                      );
                       // return Categories(
                       //   onTap: () {
-                          
+
                       //   },
                       //   categoryName: streamSnap.data!.docs[index]
                       //       ["categoryName"],
@@ -191,22 +199,54 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
-          SingleChildScrollView(
-            physics: BouncingScrollPhysics(),
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                SingleProduct(
-                  image: "", 
-                  name: '', 
-                  price: 20,
-                ),
-                SingleProduct(
-                  image: "", 
-                  name: '', 
-                  price: 25,
-                ),
-              ],
+          Container(
+            height: 300,
+            child: StreamBuilder(
+              stream: FirebaseFirestore.instance
+                  .collection("products")
+                  .where("productRate", isLessThanOrEqualTo: 3)
+                  .orderBy(
+                    "productRate",
+                    descending: true,
+                  )
+                  .snapshots(),
+              builder: (context, AsyncSnapshot<QuerySnapshot> streamSnap) {
+                if (!streamSnap.hasData) {
+                  return Center(child: const CircularProgressIndicator());
+                }
+                // return Container(
+                //   color: Colors.red,
+                // );
+                return ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    physics: BouncingScrollPhysics(),
+                    itemCount: streamSnap.data!.docs.length,
+                    itemBuilder: (ctx, index) {
+                      return SingleProduct(
+                        image: streamSnap.data!.docs[index]["productImage"],
+                        name: streamSnap.data!.docs[index]["productName"],
+                        price: streamSnap.data!.docs[index]["productPrice"],
+                        onTap: () {
+                          RoutingPage.goTonext(
+                              context: context, 
+                              navigateTo: DetailsPage(),
+                              );
+                        },
+                        // onTap: RoutingPage.goTonext(
+                        //   context: context,
+                        //   navigateTo: DetailsPage(),
+                        //  ),
+                      );
+                      // return Categories(
+                      //   onTap: () {
+
+                      //   },
+                      //   categoryName: streamSnap.data!.docs[index]
+                      //       ["categoryName"],
+                      //   image: streamSnap.data!.docs[index]["categoryImage"],
+                      // );
+                    });
+              },
             ),
           ),
         ],
@@ -214,8 +254,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
-
-
 
 class Categories extends StatelessWidget {
   final String image;
@@ -249,7 +287,6 @@ class Categories extends StatelessWidget {
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
-
             gradient: LinearGradient(
               begin: Alignment.center,
               colors: [
