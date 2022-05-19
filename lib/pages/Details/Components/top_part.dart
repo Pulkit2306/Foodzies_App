@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
 
 class TopPart extends StatelessWidget {
-  const TopPart({Key? key}) : super(key: key);
+  final String productImage;
+
+  
+  const TopPart({Key? key,
+
+  required this.productImage, 
+  
+  
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -9,7 +17,11 @@ class TopPart extends StatelessWidget {
       child: Container(
         height: 200,
         width: double.infinity,
-        color: Colors.black,
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: NetworkImage(productImage),
+          ),
+        ),
       ),
     );
   }

@@ -1,9 +1,30 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:food_demo_app/appColors/app_colors.dart';
+import 'package:food_demo_app/pages/Cart/cart_page.dart';
+import 'package:food_demo_app/route/routing_page.dart';
 import 'package:food_demo_app/widgets/my_button.dart';
 
 class BottomPart extends StatelessWidget {
-  const BottomPart({Key? key}) : super(key: key);
+  final String productName;
+  final String productImage;
+  final double productPrice;
+  final String productDescription;
+  final double productOldPrice;
+  final int productRate;
+  final String productId;
+
+  const BottomPart({
+    Key? key,
+    required this.productName,
+    required this.productImage,
+    required this.productPrice,
+    required this.productDescription,
+    required this.productOldPrice,
+    required this.productRate,
+    required this.productId,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +35,7 @@ class BottomPart extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            "Product Name",
+            productName,
             style: TextStyle(
               fontSize: 25,
               fontWeight: FontWeight.bold,
@@ -23,14 +44,14 @@ class BottomPart extends StatelessWidget {
           Row(
             children: [
               Text(
-                "\$40",
+                "\$$productPrice",
                 style: TextStyle(),
               ),
               SizedBox(
                 width: 7.5,
               ),
               Text(
-                "\$47",
+                "\$$productOldPrice",
                 style: TextStyle(
                   decoration: TextDecoration.lineThrough,
                 ),
@@ -54,7 +75,7 @@ class BottomPart extends StatelessWidget {
                     ),
                     child: Center(
                       child: Text(
-                        "4.5",
+                        productRate.toString(),
                         style: TextStyle(
                           color: AppColors.KWhite,
                         ),
@@ -81,10 +102,31 @@ class BottomPart extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-          Text(
-              "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."),
+          Text(productDescription),
           MyButton(
-            onPressed: () {},
+            onPressed: () {
+              FirebaseFirestore.instance
+                  .collection("cart")
+                  .doc(FirebaseAuth.instance.currentUser!.uid)
+                  .collection("userCart")
+                  .doc(productId)
+                  .set(
+                {
+                  "productId": productId,
+                  "productImage": productImage,
+                  "productName": productName,
+                  "productRate": productRate,
+                  "productPrice": productPrice,
+                  "productOldPrice": productOldPrice,
+                  "productDescription": productDescription,
+                  "productQuantity": 1,
+                },
+              );
+              RoutingPage.goTonext(
+                context: context,
+                navigateTo: CartPage(),
+              );
+            },
             text: "Add To Cart",
           ),
         ],

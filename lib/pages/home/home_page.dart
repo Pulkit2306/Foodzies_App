@@ -163,15 +163,24 @@ class _HomePageState extends State<HomePage> {
                     physics: BouncingScrollPhysics(),
                     itemCount: streamSnap.data!.docs.length,
                     itemBuilder: (ctx, index) {
+                      var data = streamSnap.data!.docs[index];
                       return SingleProduct(
-                        image: streamSnap.data!.docs[index]["productImage"],
-                        name: streamSnap.data!.docs[index]["productName"],
-                        price: streamSnap.data!.docs[index]["productPrice"],
+                        image: data["productImage"],
+                        name: data["productName"],
+                        price: data["productPrice"],
                         onTap: () {
                           RoutingPage.goTonext(
-                              context: context, 
-                              navigateTo: DetailsPage(),
-                              );
+                            context: context,
+                            navigateTo: DetailsPage(
+                              productId: data["productId"],
+                              productImage: data["productImage"],
+                              productName: data["productName"],
+                              productDescription: data["productDescription"],
+                              productOldPrice: data["productOldPrice"],
+                              productPrice: data["productPrice"],
+                              productRate: data["productRate"],
+                            ),
+                          );
                         },
                       );
                       // return Categories(
@@ -228,9 +237,24 @@ class _HomePageState extends State<HomePage> {
                         price: streamSnap.data!.docs[index]["productPrice"],
                         onTap: () {
                           RoutingPage.goTonext(
-                              context: context, 
-                              navigateTo: DetailsPage(),
-                              );
+                            context: context,
+                            navigateTo: DetailsPage(
+                              productId: streamSnap.data!.docs[index]
+                                  ["productId"],
+                              productImage: streamSnap.data!.docs[index]
+                                  ["productImage"],
+                              productName: streamSnap.data!.docs[index]
+                                  ["productName"],
+                              productDescription: streamSnap.data!.docs[index]
+                                  ["productDescription"],
+                              productOldPrice: streamSnap.data!.docs[index]
+                                  ["productOldPrice"],
+                              productPrice: streamSnap.data!.docs[index]
+                                  ["productPrice"],
+                              productRate: streamSnap.data!.docs[index]
+                                  ["productRate"],
+                            ),
+                          );
                         },
                         // onTap: RoutingPage.goTonext(
                         //   context: context,
