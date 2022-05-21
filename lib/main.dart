@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:food_demo_app/pages/login/components/login_auth_provider.dart';
 import 'package:food_demo_app/pages/signup/components/signup_auth_provider.dart';
 import 'package:food_demo_app/pages/welcome/welcome_page.dart';
+import 'package:food_demo_app/provider/cart_provider.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
@@ -22,6 +23,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (context) => LoginAuthProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => CartProvider(),
         ),
       ],
       child: MaterialApp(

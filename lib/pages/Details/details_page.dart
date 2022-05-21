@@ -6,6 +6,7 @@ class DetailsPage extends StatelessWidget {
   final String productImage;
   final String productName;
   final String productDescription;
+  final String productCategory;
   final double productPrice;
   final double productOldPrice;
   final int productRate;
@@ -16,6 +17,7 @@ class DetailsPage extends StatelessWidget {
     required this.productImage,
     required this.productName,
     required this.productDescription,
+    required this.productCategory,
     required this.productPrice,
     required this.productOldPrice,
     required this.productRate,
@@ -38,6 +40,7 @@ class DetailsPage extends StatelessWidget {
               productImage: productImage,
             ),
             BottomPart(
+              productCategory: productCategory,
               productImage: productImage,
               productId: productId,
               productName: productName,

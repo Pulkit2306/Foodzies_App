@@ -71,6 +71,7 @@ class GridViewWidget extends StatelessWidget {
                       RoutingPage.goTonext(
                             context: context,
                             navigateTo: DetailsPage(
+                              productCategory: data["productCategory"],
                               productId: data["productId"],
                               productImage: data["productImage"],
                               productName: data["productName"],

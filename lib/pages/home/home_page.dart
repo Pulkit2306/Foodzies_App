@@ -172,6 +172,7 @@ class _HomePageState extends State<HomePage> {
                           RoutingPage.goTonext(
                             context: context,
                             navigateTo: DetailsPage(
+                              productCategory: data["productCategory"],
                               productId: data["productId"],
                               productImage: data["productImage"],
                               productName: data["productName"],
@@ -239,6 +240,8 @@ class _HomePageState extends State<HomePage> {
                           RoutingPage.goTonext(
                             context: context,
                             navigateTo: DetailsPage(
+                              productCategory: streamSnap.data!.docs[index]
+                                  ["productCategory"],
                               productId: streamSnap.data!.docs[index]
                                   ["productId"],
                               productImage: streamSnap.data!.docs[index]
