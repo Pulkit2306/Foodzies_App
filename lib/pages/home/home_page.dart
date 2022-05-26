@@ -100,7 +100,8 @@ class _HomePageState extends State<HomePage> {
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (context) => GridViewWidget(
-                                collection: streamSnap.data!.docs[index]
+                                collection: "categories",
+                                subCollection: streamSnap.data!.docs[index]
                                     ["categoryName"],
                                 id: streamSnap.data!.docs[index].id,
                               ),
@@ -165,9 +166,14 @@ class _HomePageState extends State<HomePage> {
                     itemBuilder: (ctx, index) {
                       var data = streamSnap.data!.docs[index];
                       return SingleProduct(
-                        image: data["productImage"],
-                        name: data["productName"],
-                        price: data["productPrice"],
+                        productId: data["productId"],
+                        productCategory: data["productCategory"],
+                        productOldPrice: data["productOldPrice"],
+                        productRate: data["productRate"],
+                        productImage: data["productImage"],
+                        productName: data["productName"],
+                        productPrice: data["productPrice"],
+                        productDescription: data["productDescription"],
                         onTap: () {
                           RoutingPage.goTonext(
                             context: context,
@@ -232,10 +238,16 @@ class _HomePageState extends State<HomePage> {
                     physics: BouncingScrollPhysics(),
                     itemCount: streamSnap.data!.docs.length,
                     itemBuilder: (ctx, index) {
+                      var data = streamSnap.data!.docs[index];
                       return SingleProduct(
-                        image: streamSnap.data!.docs[index]["productImage"],
-                        name: streamSnap.data!.docs[index]["productName"],
-                        price: streamSnap.data!.docs[index]["productPrice"],
+                        productId: data["productId"],
+                        productCategory: data["productCategory"],
+                        productOldPrice: data["productOldPrice"],
+                        productRate: data["productRate"],
+                        productImage: data["productImage"],
+                        productName: data["productName"],
+                        productPrice: data["productPrice"],
+                        productDescription: data["productDescription"],
                         onTap: () {
                           RoutingPage.goTonext(
                             context: context,

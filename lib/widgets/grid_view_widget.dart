@@ -8,8 +8,13 @@ import 'package:food_demo_app/widgets/single_product.dart';
 class GridViewWidget extends StatelessWidget {
   final String id;
   final String collection;
+  final String subCollection;
 
-  const GridViewWidget({required this.id, required this.collection, Key? key})
+  const GridViewWidget(
+      {required this.id,
+      required this.collection,
+      required this.subCollection,
+      Key? key})
       : super(key: key);
 
   @override
@@ -19,12 +24,12 @@ class GridViewWidget extends StatelessWidget {
         elevation: 0,
         backgroundColor: Colors.transparent,
       ),
-      body: FutureBuilder(
-        future: FirebaseFirestore.instance
-            .collection("categories")
-            .doc(id)
+      body: StreamBuilder(
+        stream: FirebaseFirestore.instance
             .collection(collection)
-            .get(),
+            .doc(id)
+            .collection(subCollection)
+            .snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (!snapshot.hasData) {
             return Center(
@@ -35,7 +40,7 @@ class GridViewWidget extends StatelessWidget {
           return Column(
             children: [
               Padding(
-                padding: const EdgeInsets.all(9.0),
+                padding: const EdgeInsets.all(10.0),
                 child: Material(
                   elevation: 7,
                   shadowColor: Colors.grey[300],
@@ -52,39 +57,46 @@ class GridViewWidget extends StatelessWidget {
                   ),
                 ),
               ),
-              GridView.builder(
-                shrinkWrap: true,
-                itemCount: snapshot.data!.docs.length,
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  childAspectRatio: 0.5,
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 20,
-                  crossAxisSpacing: 20,
-                ),
-                itemBuilder: (context, index) {
-                  var data = snapshot.data!.docs[index];
-                  return SingleProduct(
-                    image: data["productImage"],
-                    name: data["productName"],
-                    price: data["productPrice"], 
-                    onTap: () { 
-                      RoutingPage.goTonext(
-                            context: context,
-                            navigateTo: DetailsPage(
-                              productCategory: data["productCategory"],
-                              productId: data["productId"],
-                              productImage: data["productImage"],
-                              productName: data["productName"],
-                              productDescription: data["productDescription"],
-                              productOldPrice: data["productOldPrice"],
-                              productPrice: data["productPrice"],
-                              productRate: data["productRate"],
-                            ),
-                          );
-                     },
-                  );
-                },
-              ),
+              snapshot.data!.docs.isEmpty
+                  ? Text("No Favorites Selected Yet")
+                  : GridView.builder(
+                      shrinkWrap: true,
+                      itemCount: snapshot.data!.docs.length,
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        childAspectRatio: 0.5,
+                        crossAxisCount: 2,
+                        mainAxisSpacing: 20,
+                        crossAxisSpacing: 20,
+                      ),
+                      itemBuilder: (context, index) {
+                        var data = snapshot.data!.docs[index];
+                        return SingleProduct(
+                          productId: data["productId"],
+                          productCategory: data["productCategory"],
+                          productOldPrice: data["productOldPrice"],
+                          productRate: data["productRate"],
+                          productImage: data["productImage"],
+                          productName: data["productName"],
+                          productPrice: data["productPrice"],
+                          productDescription: data["productDescription"],
+                          onTap: () {
+                            RoutingPage.goTonext(
+                              context: context,
+                              navigateTo: DetailsPage(
+                                productCategory: data["productCategory"],
+                                productId: data["productId"],
+                                productImage: data["productImage"],
+                                productName: data["productName"],
+                                productDescription: data["productDescription"],
+                                productOldPrice: data["productOldPrice"],
+                                productPrice: data["productPrice"],
+                                productRate: data["productRate"],
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    ),
             ],
           );
         },
