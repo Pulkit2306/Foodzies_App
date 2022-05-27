@@ -20,6 +20,18 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  String query = "";
+  var result;
+  searchFunction(query, searchList) {
+    result = searchList.where((element) {
+      return element["productName"].toUpperCase().contains(query) ||
+          element["productName"].toLowerCase().contains(query) ||
+          element["productName"].toUpperCase().contains(query) &&
+              element["productName"].toLowerCase().contains(query);
+    }).toList();
+    return result;
+  }
+
   Future getCurrentUserDataFunction() async {
     await FirebaseFirestore.instance
         .collection("users")
@@ -32,6 +44,123 @@ class _HomePageState extends State<HomePage> {
         print("Document does not exist");
       }
     });
+  }
+
+  Widget buildCategory() {
+    return Column(
+      children: [
+        ListTile(
+          leading: Text(
+            "Categories",
+            style: TextStyle(
+              fontSize: 25,
+              fontWeight: FontWeight.normal,
+              color: Colors.grey[500],
+            ),
+          ),
+        ),
+        Container(
+          height: 125,
+          child: StreamBuilder(
+            stream:
+                FirebaseFirestore.instance.collection("categories").snapshots(),
+            builder: (context, AsyncSnapshot<QuerySnapshot> streamSnap) {
+              if (!streamSnap.hasData) {
+                return Center(child: const CircularProgressIndicator());
+              }
+              // return Container(
+              //   color: Colors.red,
+              // );
+              return ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  physics: BouncingScrollPhysics(),
+                  itemCount: streamSnap.data!.docs.length,
+                  itemBuilder: (ctx, index) {
+                    return Categories(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => GridViewWidget(
+                              collection: "categories",
+                              subCollection: streamSnap.data!.docs[index]
+                                  ["categoryName"],
+                              id: streamSnap.data!.docs[index].id,
+                            ),
+                          ),
+                        );
+                      },
+                      categoryName: streamSnap.data!.docs[index]
+                          ["categoryName"],
+                      image: streamSnap.data!.docs[index]["categoryImage"],
+                    );
+                  });
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget buildProduct(
+      {required Stream<QuerySnapshot<Map<String, dynamic>>>? stream}) {
+    return Container(
+      height: 300,
+      child: StreamBuilder(
+        stream: stream,
+        builder: (context, AsyncSnapshot<QuerySnapshot> streamSnap) {
+          if (!streamSnap.hasData) {
+            return Center(child: const CircularProgressIndicator());
+          }
+          // return Container(
+          //   color: Colors.red,
+          // );
+          return ListView.builder(
+              scrollDirection: Axis.horizontal,
+              physics: BouncingScrollPhysics(),
+              itemCount: streamSnap.data!.docs.length,
+              itemBuilder: (ctx, index) {
+                var varData = searchFunction(query, streamSnap.data!.docs);
+
+                var data = varData[index];
+
+                // var data = streamSnap.data!.docs[index];
+                return SingleProduct(
+                  productId: data["productId"],
+                  productCategory: data["productCategory"],
+                  productOldPrice: data["productOldPrice"],
+                  productRate: data["productRate"],
+                  productImage: data["productImage"],
+                  productName: data["productName"],
+                  productPrice: data["productPrice"],
+                  productDescription: data["productDescription"],
+                  onTap: () {
+                    RoutingPage.goTonext(
+                      context: context,
+                      navigateTo: DetailsPage(
+                        productCategory: data["productCategory"],
+                        productId: data["productId"],
+                        productImage: data["productImage"],
+                        productName: data["productName"],
+                        productDescription: data["productDescription"],
+                        productOldPrice: data["productOldPrice"],
+                        productPrice: data["productPrice"],
+                        productRate: data["productRate"],
+                      ),
+                    );
+                  },
+                );
+                // return Categories(
+                //   onTap: () {
+
+                //   },
+                //   categoryName: streamSnap.data!.docs[index]
+                //       ["categoryName"],
+                //   image: streamSnap.data!.docs[index]["categoryImage"],
+                // );
+              });
+        },
+      ),
+    );
   }
 
   @override
@@ -51,6 +180,11 @@ class _HomePageState extends State<HomePage> {
               elevation: 7,
               shadowColor: Colors.grey[300],
               child: TextFormField(
+                onChanged: (value) {
+                  setState(() {
+                    query = value;
+                  });
+                },
                 decoration: InputDecoration(
                   prefixIcon: Icon(Icons.search_sharp),
                   fillColor: AppColors.KWhite,
@@ -66,228 +200,183 @@ class _HomePageState extends State<HomePage> {
           SizedBox(
             height: 30,
           ),
-          ListTile(
-            leading: Text(
-              "Categories",
-              style: TextStyle(
-                fontSize: 25,
-                fontWeight: FontWeight.normal,
-                color: Colors.grey[500],
-              ),
-            ),
-          ),
+          query == ""
+              ? Column(
+                  children: [
+                    buildCategory(),
 
-          Container(
-            height: 125,
-            child: StreamBuilder(
-              stream: FirebaseFirestore.instance
-                  .collection("categories")
-                  .snapshots(),
-              builder: (context, AsyncSnapshot<QuerySnapshot> streamSnap) {
-                if (!streamSnap.hasData) {
-                  return Center(child: const CircularProgressIndicator());
-                }
-                // return Container(
-                //   color: Colors.red,
-                // );
-                return ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    physics: BouncingScrollPhysics(),
-                    itemCount: streamSnap.data!.docs.length,
-                    itemBuilder: (ctx, index) {
-                      return Categories(
-                        onTap: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => GridViewWidget(
-                                collection: "categories",
-                                subCollection: streamSnap.data!.docs[index]
-                                    ["categoryName"],
-                                id: streamSnap.data!.docs[index].id,
+                    // SingleChildScrollView(
+                    //   physics: BouncingScrollPhysics(),
+                    //   scrollDirection: Axis.horizontal,
+                    //   child: Row(
+                    //     children: [
+                    //       Categories(
+                    //         categoryName: "Category 1",
+                    //         image: "Assets/Images/starters.jpg",
+                    //       ),
+                    //       Categories(
+                    //         categoryName: "Catergory 2",
+                    //         image: "Assets/Images/soup.webp",
+                    //       ),
+                    //     ],
+                    //   ),
+                    // ),
+
+                    SizedBox(
+                      height: 30,
+                    ),
+                    ListTile(
+                      leading: Text(
+                        "Products",
+                        style: TextStyle(
+                          fontSize: 25,
+                          fontWeight: FontWeight.normal,
+                          color: Colors.purpleAccent[500],
+                        ),
+                      ),
+                    ),
+                    buildProduct(
+                      stream: FirebaseFirestore.instance
+                          .collection("products")
+                          .snapshots(),
+                    ),
+
+                    SizedBox(
+                      height: 30,
+                    ),
+                    ListTile(
+                      leading: Text(
+                        "Best Seller",
+                        style: TextStyle(
+                          fontSize: 25,
+                          fontWeight: FontWeight.normal,
+                          color: Colors.indigo[500],
+                        ),
+                      ),
+                    ),
+
+                    buildProduct(
+                      stream: FirebaseFirestore.instance
+                          .collection("products")
+                          .where("productRate", isLessThanOrEqualTo: 3)
+                          .orderBy(
+                            "productRate",
+                            descending: true,
+                          )
+                          .snapshots(),
+                    ),
+                  ],
+                )
+              : Container(
+                  child: StreamBuilder(
+                    stream: FirebaseFirestore.instance
+                        .collection("products")
+                        .snapshots(),
+                    builder:
+                        (context, AsyncSnapshot<QuerySnapshot> streamSnap) {
+                      if (!streamSnap.hasData) {
+                        return Center(child: const CircularProgressIndicator());
+                      }
+                      // return Container(
+                      //   color: Colors.red,
+                      // );
+
+                      var varData =
+                          searchFunction(query, streamSnap.data!.docs);
+                      return result.isEmpty
+                          ? Center(child: Text("Not Found"))
+                          : GridView.builder(
+                            shrinkWrap: true,
+                              itemCount: result.length,
+                              gridDelegate:
+                                  SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                crossAxisSpacing: 5.0,
+                                mainAxisSpacing: 5.0,
+                                childAspectRatio: 0.5,
                               ),
-                            ),
-                          );
-                        },
-                        categoryName: streamSnap.data!.docs[index]
-                            ["categoryName"],
-                        image: streamSnap.data!.docs[index]["categoryImage"],
-                      );
-                    });
-              },
-            ),
-          ),
+                              itemBuilder: (ctx, index) {
+                                var data = varData[index];
+                                return SingleProduct(
+                                  productId: data["productId"],
+                                  productCategory: data["productCategory"],
+                                  productOldPrice: data["productOldPrice"],
+                                  productRate: data["productRate"],
+                                  productImage: data["productImage"],
+                                  productName: data["productName"],
+                                  productPrice: data["productPrice"],
+                                  productDescription:
+                                      data["productDescription"],
+                                  onTap: () {
+                                    RoutingPage.goTonext(
+                                      context: context,
+                                      navigateTo: DetailsPage(
+                                        productCategory:
+                                            data["productCategory"],
+                                        productId: data["productId"],
+                                        productImage: data["productImage"],
+                                        productName: data["productName"],
+                                        productDescription:
+                                            data["productDescription"],
+                                        productOldPrice:
+                                            data["productOldPrice"],
+                                        productPrice: data["productPrice"],
+                                        productRate: data["productRate"],
+                                      ),
+                                    );
+                                  },
+                                );
+                              });
 
-          // SingleChildScrollView(
-          //   physics: BouncingScrollPhysics(),
-          //   scrollDirection: Axis.horizontal,
-          //   child: Row(
-          //     children: [
-          //       Categories(
-          //         categoryName: "Category 1",
-          //         image: "Assets/Images/starters.jpg",
-          //       ),
-          //       Categories(
-          //         categoryName: "Catergory 2",
-          //         image: "Assets/Images/soup.webp",
-          //       ),
-          //     ],
-          //   ),
-          // ),
+                      // return ListView.builder(
+                      //     scrollDirection: Axis.horizontal,
+                      //     physics: BouncingScrollPhysics(),
+                      //     itemCount: streamSnap.data!.docs.length,
+                      //     itemBuilder: (ctx, index) {
+                      //       var varData =
+                      //           searchFunction(query, streamSnap.data!.docs);
 
-          SizedBox(
-            height: 30,
-          ),
-          ListTile(
-            leading: Text(
-              "Products",
-              style: TextStyle(
-                fontSize: 25,
-                fontWeight: FontWeight.normal,
-                color: Colors.purpleAccent[500],
-              ),
-            ),
-          ),
-          Container(
-            height: 300,
-            child: StreamBuilder(
-              stream:
-                  FirebaseFirestore.instance.collection("products").snapshots(),
-              builder: (context, AsyncSnapshot<QuerySnapshot> streamSnap) {
-                if (!streamSnap.hasData) {
-                  return Center(child: const CircularProgressIndicator());
-                }
-                // return Container(
-                //   color: Colors.red,
-                // );
-                return ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    physics: BouncingScrollPhysics(),
-                    itemCount: streamSnap.data!.docs.length,
-                    itemBuilder: (ctx, index) {
-                      var data = streamSnap.data!.docs[index];
-                      return SingleProduct(
-                        productId: data["productId"],
-                        productCategory: data["productCategory"],
-                        productOldPrice: data["productOldPrice"],
-                        productRate: data["productRate"],
-                        productImage: data["productImage"],
-                        productName: data["productName"],
-                        productPrice: data["productPrice"],
-                        productDescription: data["productDescription"],
-                        onTap: () {
-                          RoutingPage.goTonext(
-                            context: context,
-                            navigateTo: DetailsPage(
-                              productCategory: data["productCategory"],
-                              productId: data["productId"],
-                              productImage: data["productImage"],
-                              productName: data["productName"],
-                              productDescription: data["productDescription"],
-                              productOldPrice: data["productOldPrice"],
-                              productPrice: data["productPrice"],
-                              productRate: data["productRate"],
-                            ),
-                          );
-                        },
-                      );
-                      // return Categories(
-                      //   onTap: () {
+                      //       var data = varData[index];
 
-                      //   },
-                      //   categoryName: streamSnap.data!.docs[index]
-                      //       ["categoryName"],
-                      //   image: streamSnap.data!.docs[index]["categoryImage"],
-                      // );
-                    });
-              },
-            ),
-          ),
-          SizedBox(
-            height: 30,
-          ),
-          ListTile(
-            leading: Text(
-              "Best Seller",
-              style: TextStyle(
-                fontSize: 25,
-                fontWeight: FontWeight.normal,
-                color: Colors.indigo[500],
-              ),
-            ),
-          ),
-          Container(
-            height: 300,
-            child: StreamBuilder(
-              stream: FirebaseFirestore.instance
-                  .collection("products")
-                  .where("productRate", isLessThanOrEqualTo: 3)
-                  .orderBy(
-                    "productRate",
-                    descending: true,
-                  )
-                  .snapshots(),
-              builder: (context, AsyncSnapshot<QuerySnapshot> streamSnap) {
-                if (!streamSnap.hasData) {
-                  return Center(child: const CircularProgressIndicator());
-                }
-                // return Container(
-                //   color: Colors.red,
-                // );
-                return ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    physics: BouncingScrollPhysics(),
-                    itemCount: streamSnap.data!.docs.length,
-                    itemBuilder: (ctx, index) {
-                      var data = streamSnap.data!.docs[index];
-                      return SingleProduct(
-                        productId: data["productId"],
-                        productCategory: data["productCategory"],
-                        productOldPrice: data["productOldPrice"],
-                        productRate: data["productRate"],
-                        productImage: data["productImage"],
-                        productName: data["productName"],
-                        productPrice: data["productPrice"],
-                        productDescription: data["productDescription"],
-                        onTap: () {
-                          RoutingPage.goTonext(
-                            context: context,
-                            navigateTo: DetailsPage(
-                              productCategory: streamSnap.data!.docs[index]
-                                  ["productCategory"],
-                              productId: streamSnap.data!.docs[index]
-                                  ["productId"],
-                              productImage: streamSnap.data!.docs[index]
-                                  ["productImage"],
-                              productName: streamSnap.data!.docs[index]
-                                  ["productName"],
-                              productDescription: streamSnap.data!.docs[index]
-                                  ["productDescription"],
-                              productOldPrice: streamSnap.data!.docs[index]
-                                  ["productOldPrice"],
-                              productPrice: streamSnap.data!.docs[index]
-                                  ["productPrice"],
-                              productRate: streamSnap.data!.docs[index]
-                                  ["productRate"],
-                            ),
-                          );
-                        },
-                        // onTap: RoutingPage.goTonext(
-                        //   context: context,
-                        //   navigateTo: DetailsPage(),
-                        //  ),
-                      );
-                      // return Categories(
-                      //   onTap: () {
+                      //       // var data = streamSnap.data!.docs[index];
+                      //       return SingleProduct(
+                      //         productId: data["productId"],
+                      //         productCategory: data["productCategory"],
+                      //         productOldPrice: data["productOldPrice"],
+                      //         productRate: data["productRate"],
+                      //         productImage: data["productImage"],
+                      //         productName: data["productName"],
+                      //         productPrice: data["productPrice"],
+                      //         productDescription: data["productDescription"],
+                      //         onTap: () {
+                      //           RoutingPage.goTonext(
+                      //             context: context,
+                      //             navigateTo: DetailsPage(
+                      //               productCategory: data["productCategory"],
+                      //               productId: data["productId"],
+                      //               productImage: data["productImage"],
+                      //               productName: data["productName"],
+                      //               productDescription:
+                      //                   data["productDescription"],
+                      //               productOldPrice: data["productOldPrice"],
+                      //               productPrice: data["productPrice"],
+                      //               productRate: data["productRate"],
+                      //             ),
+                      //           );
+                      //         },
+                      //       );
+                      //       // return Categories(
+                      //       //   onTap: () {
 
-                      //   },
-                      //   categoryName: streamSnap.data!.docs[index]
-                      //       ["categoryName"],
-                      //   image: streamSnap.data!.docs[index]["categoryImage"],
-                      // );
-                    });
-              },
-            ),
-          ),
+                      //       //   },
+                      //       //   categoryName: streamSnap.data!.docs[index]
+                      //       //       ["categoryName"],
+                      //       //   image: streamSnap.data!.docs[index]["categoryImage"],
+                      //       // );
+                      //     });
+                    },
+                  ),
+                ),
         ],
       ),
     );

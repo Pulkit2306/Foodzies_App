@@ -5,7 +5,7 @@ import 'package:food_demo_app/pages/Details/details_page.dart';
 import 'package:food_demo_app/route/routing_page.dart';
 import 'package:food_demo_app/widgets/single_product.dart';
 
-class GridViewWidget extends StatelessWidget {
+class GridViewWidget extends StatefulWidget {
   final String id;
   final String collection;
   final String subCollection;
@@ -18,6 +18,23 @@ class GridViewWidget extends StatelessWidget {
       : super(key: key);
 
   @override
+  State<GridViewWidget> createState() => _GridViewWidgetState();
+}
+
+class _GridViewWidgetState extends State<GridViewWidget> {
+  String query = "";
+  var result;
+  searchFunction(query, searchList) {
+    result = searchList.where((element) {
+      return element["productName"].toUpperCase().contains(query) ||
+          element["productName"].toLowerCase().contains(query) ||
+          element["productName"].toUpperCase().contains(query) &&
+              element["productName"].toLowerCase().contains(query);
+    }).toList();
+    return result;
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -26,9 +43,9 @@ class GridViewWidget extends StatelessWidget {
       ),
       body: StreamBuilder(
         stream: FirebaseFirestore.instance
-            .collection(collection)
-            .doc(id)
-            .collection(subCollection)
+            .collection(widget.collection)
+            .doc(widget.id)
+            .collection(widget.subCollection)
             .snapshots(),
         builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (!snapshot.hasData) {
@@ -37,6 +54,7 @@ class GridViewWidget extends StatelessWidget {
             );
           }
 
+          var varData = searchFunction(query, snapshot.data!.docs);
           return Column(
             children: [
               Padding(
@@ -45,6 +63,11 @@ class GridViewWidget extends StatelessWidget {
                   elevation: 7,
                   shadowColor: Colors.grey[300],
                   child: TextFormField(
+                    onChanged: (value) {
+                      setState(() {
+                        query = value;
+                      });
+                    },
                     decoration: InputDecoration(
                       prefixIcon: Icon(Icons.search_sharp),
                       fillColor: AppColors.KWhite,
@@ -57,19 +80,19 @@ class GridViewWidget extends StatelessWidget {
                   ),
                 ),
               ),
-              snapshot.data!.docs.isEmpty
-                  ? Text("No Favorites Selected Yet")
+              result.isEmpty
+                  ? Center(child: Text("Not Found"))
                   : GridView.builder(
                       shrinkWrap: true,
-                      itemCount: snapshot.data!.docs.length,
+                      itemCount: result.length,
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        childAspectRatio: 0.5,
                         crossAxisCount: 2,
-                        mainAxisSpacing: 20,
-                        crossAxisSpacing: 20,
+                        crossAxisSpacing: 5.0,
+                        mainAxisSpacing: 5.0,
+                        childAspectRatio: 0.5,
                       ),
-                      itemBuilder: (context, index) {
-                        var data = snapshot.data!.docs[index];
+                      itemBuilder: (ctx, index) {
+                        var data = varData[index];
                         return SingleProduct(
                           productId: data["productId"],
                           productCategory: data["productCategory"],
@@ -95,8 +118,7 @@ class GridViewWidget extends StatelessWidget {
                             );
                           },
                         );
-                      },
-                    ),
+                      }),
             ],
           );
         },
