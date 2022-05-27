@@ -12,6 +12,8 @@ import '../../widgets/single_product.dart';
 
 late UserModel userModel;
 
+Size? size;
+
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
 
@@ -60,7 +62,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         Container(
-          height: 125,
+          height: size!.height * 0.157,
           child: StreamBuilder(
             stream:
                 FirebaseFirestore.instance.collection("categories").snapshots(),
@@ -104,7 +106,7 @@ class _HomePageState extends State<HomePage> {
   Widget buildProduct(
       {required Stream<QuerySnapshot<Map<String, dynamic>>>? stream}) {
     return Container(
-      height: 300,
+      height: size!.height / 3 + 40,
       child: StreamBuilder(
         stream: stream,
         builder: (context, AsyncSnapshot<QuerySnapshot> streamSnap) {
@@ -165,6 +167,8 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    size = MediaQuery.of(context).size;
+
     getCurrentUserDataFunction();
     return Scaffold(
       drawer: BuildDrawer(),
@@ -286,7 +290,7 @@ class _HomePageState extends State<HomePage> {
                       return result.isEmpty
                           ? Center(child: Text("Not Found"))
                           : GridView.builder(
-                            shrinkWrap: true,
+                              shrinkWrap: true,
                               itemCount: result.length,
                               gridDelegate:
                                   SliverGridDelegateWithFixedCrossAxisCount(
@@ -401,8 +405,7 @@ class Categories extends StatelessWidget {
       onTap: onTap,
       child: Container(
         margin: EdgeInsets.all(12),
-        height: 100,
-        width: 185,
+        width: size!.width / 2 - 20,
         decoration: BoxDecoration(
           image: DecorationImage(
             fit: BoxFit.cover,

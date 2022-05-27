@@ -5,6 +5,8 @@ import 'package:food_demo_app/appColors/app_colors.dart';
 import 'package:food_demo_app/provider/favorite_provider.dart';
 import 'package:provider/provider.dart';
 
+Size? size;
+
 class SingleProduct extends StatefulWidget {
   final productImage;
   final productId;
@@ -40,6 +42,7 @@ class _SingleProductState extends State<SingleProduct> {
 
   @override
   Widget build(BuildContext context) {
+    size = MediaQuery.of(context).size;
     FavoriteProvider favoriteProvider = Provider.of<FavoriteProvider>(context);
 
     FirebaseFirestore.instance
@@ -69,8 +72,8 @@ class _SingleProductState extends State<SingleProduct> {
           Container(
             margin: EdgeInsets.all(12),
             alignment: Alignment.topRight,
-            height: 250,
-            width: 180,
+            height: size!.height * 0.285,
+            width: size!.width / 2 - 20,
             decoration: BoxDecoration(
               image: DecorationImage(
                 fit: BoxFit.cover,
