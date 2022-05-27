@@ -4,6 +4,7 @@ import 'package:food_demo_app/provider/cart_provider.dart';
 import 'package:food_demo_app/widgets/my_button.dart';
 import 'package:food_demo_app/widgets/single_cart_item.dart';
 import 'package:provider/provider.dart';
+import 'package:razorpay_flutter/razorpay_flutter.dart';
 
 class CheckOutPage extends StatefulWidget {
   const CheckOutPage({Key? key}) : super(key: key);
@@ -13,6 +14,69 @@ class CheckOutPage extends StatefulWidget {
 }
 
 class _CheckOutPageState extends State<CheckOutPage> {
+  late Razorpay _razorpay;
+  late double finalValue;
+
+  @override
+  void initState() {
+    super.initState();
+    _razorpay = Razorpay();
+    _razorpay.on(Razorpay.EVENT_PAYMENT_SUCCESS, _handlePaymentSuccess);
+    _razorpay.on(Razorpay.EVENT_PAYMENT_ERROR, _handlePaymentError);
+    _razorpay.on(Razorpay.EVENT_EXTERNAL_WALLET, _handleExternalWallet);
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _razorpay.clear();
+  }
+
+  void openCheckout() async {
+    var options = {
+      'key': 'rzp_test_1DP5mmOlF5G5ag',
+      'amount': num.parse(finalValue.toString()) * 100,
+      'name': 'Foodzies by Designographies',
+      'description': 'Food Order Payment',
+      'retry': {'enabled': true, 'max_count': 1},
+      'send_sms_hash': true,
+      'prefill': {
+        'contact': '8054209630',
+        'email': 'foodzies@razorpay.com',
+      },
+      'external': {
+        'wallets': ['paytm']
+      }
+    };
+
+    try {
+      _razorpay.open(options);
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  void _handlePaymentSuccess(PaymentSuccessResponse response) {
+    print('Success Response: $response');
+    /*Fluttertoast.showToast(
+        msg: "SUCCESS: " + response.paymentId!,
+        toastLength: Toast.LENGTH_SHORT); */
+  }
+
+  void _handlePaymentError(PaymentFailureResponse response) {
+    print('Error Response: $response');
+    /* Fluttertoast.showToast(
+        msg: "ERROR: " + response.code.toString() + " - " + response.message!,
+        toastLength: Toast.LENGTH_SHORT); */
+  }
+
+  void _handleExternalWallet(ExternalWalletResponse response) {
+    print('External SDK Response: $response');
+    /* Fluttertoast.showToast(
+        msg: "EXTERNAL_WALLET: " + response.walletName!,
+        toastLength: Toast.LENGTH_SHORT); */
+  }
+
   @override
   Widget build(BuildContext context) {
     CartProvider cartProvider = Provider.of<CartProvider>(context);
@@ -33,8 +97,8 @@ class _CheckOutPageState extends State<CheckOutPage> {
     double shippingValue = (discountValue * shipping) / 100;
 
     double finalValuE = value += shippingValue;
-    
-    double finalValue = double.parse((finalValuE).toStringAsFixed(2));
+
+    finalValue = double.parse((finalValuE).toStringAsFixed(2));
 
     if (cartProvider.getCartList.isEmpty) {
       setState(() {
@@ -109,7 +173,11 @@ class _CheckOutPageState extends State<CheckOutPage> {
                 ),
                 cartProvider.getCartList.isEmpty
                     ? Text("")
-                    : MyButton(onPressed: () {}, text: "Order Now"),
+                    : MyButton(
+                        onPressed: () =>
+                          openCheckout(),
+                        text: "Order Now"
+                        ),
               ],
             ),
           ),
