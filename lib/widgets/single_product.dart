@@ -8,23 +8,19 @@ import 'package:provider/provider.dart';
 Size? size;
 
 class SingleProduct extends StatefulWidget {
-  final productImage;
   final productId;
   final productCategory;
   final productRate;
-  // final productFavorite;
   final productOldPrice;
-  final productDescription;
   final productPrice;
+  final productImage;
   final productName;
   final Function()? onTap;
 
   const SingleProduct(
       {required this.productImage,
       required this.productCategory,
-      // required this.productFavorite,
       required this.productOldPrice,
-      required this.productDescription,
       required this.productRate,
       required this.productId,
       required this.productPrice,
@@ -99,7 +95,7 @@ class _SingleProductState extends State<SingleProduct> {
                       productOldPrice: widget.productOldPrice,
                       productFavorite: true,
                       productImage: widget.productImage,
-                      productDescription: widget.productDescription,
+                      
                     );
                   } else if (isFavorite == false) {
                     favoriteProvider.deleteFavorite(

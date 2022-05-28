@@ -134,7 +134,7 @@ class _HomePageState extends State<HomePage> {
                   productImage: data["productImage"],
                   productName: data["productName"],
                   productPrice: data["productPrice"],
-                  productDescription: data["productDescription"],
+                  
                   onTap: () {
                     RoutingPage.goTonext(
                       context: context,
@@ -151,14 +151,6 @@ class _HomePageState extends State<HomePage> {
                     );
                   },
                 );
-                // return Categories(
-                //   onTap: () {
-
-                //   },
-                //   categoryName: streamSnap.data!.docs[index]
-                //       ["categoryName"],
-                //   image: streamSnap.data!.docs[index]["categoryImage"],
-                // );
               });
         },
       ),
@@ -208,24 +200,6 @@ class _HomePageState extends State<HomePage> {
               ? Column(
                   children: [
                     buildCategory(),
-
-                    // SingleChildScrollView(
-                    //   physics: BouncingScrollPhysics(),
-                    //   scrollDirection: Axis.horizontal,
-                    //   child: Row(
-                    //     children: [
-                    //       Categories(
-                    //         categoryName: "Category 1",
-                    //         image: "Assets/Images/starters.jpg",
-                    //       ),
-                    //       Categories(
-                    //         categoryName: "Catergory 2",
-                    //         image: "Assets/Images/soup.webp",
-                    //       ),
-                    //     ],
-                    //   ),
-                    // ),
-
                     SizedBox(
                       height: 30,
                     ),
@@ -309,8 +283,6 @@ class _HomePageState extends State<HomePage> {
                                   productImage: data["productImage"],
                                   productName: data["productName"],
                                   productPrice: data["productPrice"],
-                                  productDescription:
-                                      data["productDescription"],
                                   onTap: () {
                                     RoutingPage.goTonext(
                                       context: context,
@@ -331,53 +303,6 @@ class _HomePageState extends State<HomePage> {
                                   },
                                 );
                               });
-
-                      // return ListView.builder(
-                      //     scrollDirection: Axis.horizontal,
-                      //     physics: BouncingScrollPhysics(),
-                      //     itemCount: streamSnap.data!.docs.length,
-                      //     itemBuilder: (ctx, index) {
-                      //       var varData =
-                      //           searchFunction(query, streamSnap.data!.docs);
-
-                      //       var data = varData[index];
-
-                      //       // var data = streamSnap.data!.docs[index];
-                      //       return SingleProduct(
-                      //         productId: data["productId"],
-                      //         productCategory: data["productCategory"],
-                      //         productOldPrice: data["productOldPrice"],
-                      //         productRate: data["productRate"],
-                      //         productImage: data["productImage"],
-                      //         productName: data["productName"],
-                      //         productPrice: data["productPrice"],
-                      //         productDescription: data["productDescription"],
-                      //         onTap: () {
-                      //           RoutingPage.goTonext(
-                      //             context: context,
-                      //             navigateTo: DetailsPage(
-                      //               productCategory: data["productCategory"],
-                      //               productId: data["productId"],
-                      //               productImage: data["productImage"],
-                      //               productName: data["productName"],
-                      //               productDescription:
-                      //                   data["productDescription"],
-                      //               productOldPrice: data["productOldPrice"],
-                      //               productPrice: data["productPrice"],
-                      //               productRate: data["productRate"],
-                      //             ),
-                      //           );
-                      //         },
-                      //       );
-                      //       // return Categories(
-                      //       //   onTap: () {
-
-                      //       //   },
-                      //       //   categoryName: streamSnap.data!.docs[index]
-                      //       //       ["categoryName"],
-                      //       //   image: streamSnap.data!.docs[index]["categoryImage"],
-                      //       // );
-                      //     });
                     },
                   ),
                 ),

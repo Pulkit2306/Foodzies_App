@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:food_demo_app/models/user_model.dart';
 import 'package:food_demo_app/pages/home/home_page.dart';
 import 'package:food_demo_app/pages/login/components/login_auth_provider.dart';
 import 'package:food_demo_app/route/routing_page.dart';

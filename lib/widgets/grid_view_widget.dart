@@ -94,14 +94,6 @@ class _GridViewWidgetState extends State<GridViewWidget> {
                       itemBuilder: (ctx, index) {
                         var data = varData[index];
                         return SingleProduct(
-                          productId: data["productId"],
-                          productCategory: data["productCategory"],
-                          productOldPrice: data["productOldPrice"],
-                          productRate: data["productRate"],
-                          productImage: data["productImage"],
-                          productName: data["productName"],
-                          productPrice: data["productPrice"],
-                          productDescription: data["productDescription"],
                           onTap: () {
                             RoutingPage.goTonext(
                               context: context,
@@ -110,15 +102,23 @@ class _GridViewWidgetState extends State<GridViewWidget> {
                                 productId: data["productId"],
                                 productImage: data["productImage"],
                                 productName: data["productName"],
-                                productDescription: data["productDescription"],
                                 productOldPrice: data["productOldPrice"],
                                 productPrice: data["productPrice"],
                                 productRate: data["productRate"],
+                                productDescription: data["productDescription"],
                               ),
                             );
                           },
+                          productId: data["productId"],
+                          productCategory: data["productCategory"],
+                          productRate: data["productRate"],
+                          productOldPrice: data["productOldPrice"],
+                          productPrice: data["productPrice"],
+                          productImage: data["productImage"],
+                          productName: data["productName"],
                         );
-                      }),
+                      },
+                    ),
             ],
           );
         },

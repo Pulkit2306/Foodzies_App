@@ -7,10 +7,14 @@ class FavouritePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GridViewWidget(
-      collection: "favorite",
-      subCollection: "userFavorite",
-      id: FirebaseAuth.instance.currentUser!.uid,
+    return Scaffold(
+      body: Container(
+        child: GridViewWidget(
+          collection: "favorite",
+          subCollection: "userFavorite",
+          id: FirebaseAuth.instance.currentUser!.uid,
+        ),
+      ),
     );
   }
 }

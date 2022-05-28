@@ -12,7 +12,7 @@ class FavoriteProvider with ChangeNotifier {
       required productOldPrice,
       required productFavorite,
       required productImage,
-      required productDescription,
+      
       I}) {
     FirebaseFirestore.instance
         .collection("favorite")
@@ -29,7 +29,6 @@ class FavoriteProvider with ChangeNotifier {
         "protuctCategory": protuctCategory,
         "productRate": productRate,
         "productFavorite": productFavorite,
-        "productDescription": productDescription,
       },
     );
   }
