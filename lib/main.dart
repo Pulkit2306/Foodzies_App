@@ -2,9 +2,11 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:food_demo_app/pages/login/components/login_auth_provider.dart';
 import 'package:food_demo_app/pages/signup/components/signup_auth_provider.dart';
+import 'package:food_demo_app/pages/theme/theme.dart';
 import 'package:food_demo_app/pages/welcome/welcome_page.dart';
 import 'package:food_demo_app/provider/cart_provider.dart';
 import 'package:food_demo_app/provider/favorite_provider.dart';
+import 'package:food_demo_app/splash%20screen/splash.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
@@ -35,15 +37,10 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-          appBarTheme: AppBarTheme(
-            iconTheme: IconThemeData(
-              color: Colors.black,
-            ),
-          ),
-        ),
-       home: WelcomePage(),
+        themeMode: ThemeMode.system,
+        theme: MyThemes.lightTheme,
+        darkTheme: MyThemes.darkTheme,
+       home: SplashScreen(),
         // home: StreamBuilder(
         //     stream: FirebaseAuth.instance.authStateChanges(),
         //     builder: (context, userSnapshot) {
