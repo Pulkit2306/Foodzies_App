@@ -4,8 +4,8 @@ import 'package:food_demo_app/pages/signup/components/signup_auth_provider.dart'
 import 'package:food_demo_app/route/routing_page.dart';
 import 'package:food_demo_app/widgets/my_button.dart';
 import 'package:provider/provider.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:firebase_auth/firebase_auth.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({Key? key}) : super(key: key);

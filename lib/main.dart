@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:food_demo_app/pages/login/components/login_auth_provider.dart';
 import 'package:food_demo_app/pages/signup/components/signup_auth_provider.dart';
 import 'package:food_demo_app/pages/theme/theme.dart';
-import 'package:food_demo_app/pages/welcome/welcome_page.dart';
+// import 'package:food_demo_app/pages/welcome/welcome_page.dart';
 import 'package:food_demo_app/provider/cart_provider.dart';
 import 'package:food_demo_app/provider/favorite_provider.dart';
 import 'package:food_demo_app/splash%20screen/splash.dart';
